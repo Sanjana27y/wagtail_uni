@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+    <!-- Navigation-->
+    <nav id="mainNav" class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top">
+      <div class="container">
+          <a class="navbar-brand" href="#page-top">{{ self.full_name }}</a>
+          <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#navbarResponsive"
+                  aria-controls="navbarResponsive"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation">
+              Menu
+              <i class="fas fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav ms-auto">
+                  <li class="nav-item mx-0 mx-lg-1">
+                      <a class="nav-link py-3 px-0 px-lg-3 rounded" href="#about">About</a>
+                  </li>
+                  <li class="nav-item mx-0 mx-lg-1">
+                      <a class="nav-link py-3 px-0 px-lg-3 rounded" href="#skills">Skills</a>
+                  </li>
+                  <li class="nav-item mx-0 mx-lg-1">
+                      <a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolio">Portfolio</a>
+                  </li>
+                  <li class="nav-item mx-0 mx-lg-1">
+                      <a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </nav>
+
+
+  <h1>{{ page.title }}</h1>
+  <div class="intro">
+    {{ page.intro|richtext }}
+  </div>
+  <div class="slideshow">
+    {% for slide in page.slideshow_images %}
+      <div class="slide">
+        {% comment %} {%image page.slideshow_images fill-1400x300 as img %} {% endcomment %}
+        <img src="{{ slide.value.url }}" alt="Slideshow image">
+      </div>
+    {% endfor %}
+  </div>
+  <div class="important-points">
+    <ul>
+      {% for point in page.important_points %}
+        <li>{{ point.value }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

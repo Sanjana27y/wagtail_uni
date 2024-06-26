@@ -1,0 +1,21 @@
+.core-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.core-value {
+    flex: 1 1 calc(33% - 20px);
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.core-value h3 {
+    color: #007bff;
+}
+
+.core-value p {
+    color: #555;
+}
