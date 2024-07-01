@@ -1,0 +1,12 @@
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .course-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  

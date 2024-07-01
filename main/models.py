@@ -4,56 +4,15 @@ from wagtail.admin.panels import FieldPanel, PageChooserPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail import blocks
-from wagtail.blocks import StructBlock, CharBlock, TextBlock
+from wagtail.blocks import StructBlock, CharBlock, TextBlock, RichTextBlock
 from wagtail.models import Orderable
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import InlinePanel
 from wagtail.snippets.models import register_snippet
-
-class CoreValueBlock(StructBlock):
-    title = CharBlock(required=True)
-    description = TextBlock(required=True)
-
-    class Meta:
-        template = "blocks/core_value_block.html"
-
-class AboutUsPage(Page):
-    intro = RichTextField(blank=True)
-    body = RichTextField(blank=True)
-    core_values = StreamField([('core_value', CoreValueBlock())], blank=True)
-
-    content_panels = Page.content_panels + [
-        FieldPanel('intro'),
-        FieldPanel('body'),
-        FieldPanel('core_values'),
-    ]
-
-class MenuItem(Orderable):
-    link_title = models.CharField(max_length=50)
-    link_page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, related_name='+', on_delete=models.CASCADE)
-
-    panels = [
-        FieldPanel('link_title'),
-        PageChooserPanel('link_page'),
-    ]
-
-    def __str__(self):
-        return self.link_title
-
-@register_snippet
-class Menu(ClusterableModel):
-    title = models.CharField(max_length=100)
-    menu_items = models.ManyToManyField(MenuItem, related_name='menus', blank=True)
-
-    panels = [
-        FieldPanel('title'),
-        InlinePanel('menu_items', label="Menu Items")
-    ]
-
-    def __str__(self):
-        return self.title
-
+from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.documents.blocks import DocumentChooserBlock
 
 
 class HomePage(Page):
@@ -65,13 +24,6 @@ class HomePage(Page):
     important_points = StreamField([
         ('point', blocks.CharBlock())
     ], blank=True)
-    # slideshow_images= models.ForeignKey(
-    #     'wagttailimages.Image',
-    #     null = True,
-    #     blank = True,
-    #     on_delete= models.SET_NULL,
-    #     related_name = '+',
-    # )
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
@@ -79,20 +31,55 @@ class HomePage(Page):
         FieldPanel('important_points'),
     ]
 
-class CoreValueBlock(StructBlock):
-    title = CharBlock(required=True)
-    description = TextBlock(required=True)
 
-    class Meta:
-        template = "blocks/core_value_block.html"
+class AboutUsPage(Page):
+    intro = RichTextField(blank=True)
+    vision_mission = StreamField(
+        [('paragraph', blocks.RichTextBlock())], null=True, blank=True)
+    history = StreamField(
+        [('paragraph', blocks.RichTextBlock())], null=True, blank=True)
+    core_values = StreamField(
+        [('paragraph', blocks.RichTextBlock())], null=True, blank=True)
+    research = StreamField(
+        [('paragraph', blocks.RichTextBlock())], null=True, blank=True)
+    campus_map = StreamField(
+        [('image', ImageChooserBlock())], null=True, blank=True)
+  
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('vision_mission'),
+        FieldPanel('history'),
+        FieldPanel('core_values'),
+        FieldPanel('research'),
+        FieldPanel('campus_map'),
+    ]
 
-
-class ContactUsPage(Page):
-    content = RichTextField(blank=True)
+class CoursesPage(Page):
+    intro = models.CharField(max_length=255, blank=True)
 
     content_panels = Page.content_panels + [
-        FieldPanel('content'),
+        FieldPanel('intro'),
+        InlinePanel('courses', label="Courses"),
     ]
+
+class Course(Orderable):
+    page = ParentalKey('main.CoursesPage', on_delete=models.CASCADE, related_name='courses')
+    title = models.CharField(max_length=64)
+    description = models.TextField(blank=True, null=True)
+    image = models.ForeignKey(
+        'wagtailimages.Image', on_delete=models.CASCADE, related_name='+'
+    )
+    pdf = models.ForeignKey(
+        'wagtaildocs.Document', on_delete=models.CASCADE, related_name='+'
+    )
+
+    panels = [
+        FieldPanel('title'),
+        FieldPanel('description'),
+        FieldPanel('image'),
+        FieldPanel('pdf'),
+    ]
+
 
 class FacultyPage(Page):
     content = RichTextField(blank=True)
@@ -101,12 +88,7 @@ class FacultyPage(Page):
         FieldPanel('content'),
     ]
 
-class CoursesPage(Page):
-    content = RichTextField(blank=True)
 
-    content_panels = Page.content_panels + [
-        FieldPanel('content'),
-    ]
 
 class GalleryPage(Page):
     content = RichTextField(blank=True)
